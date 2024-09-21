@@ -174,17 +174,22 @@
             </div>
         </div>
 
-        <!-- Interactive Terminal -->
-        <div class="terminal" id="terminal">
-            <div class="terminal-output" id="terminal-output">
-                Welcome to Mikkel's CV terminal.
-                Type commands like <span>ls</span>, <span>pwd</span>, <span>ifconfig</span>, <span>cat skills.txt</span>.
+        
+            <!-- Interactive Terminal -->
+            <div class="terminal" id="terminal">
+                <div class="terminal-output" id="terminal-output">
+                    Welcome to Mikkel's CV terminal.
+                    Type commands like <span>ls</span>, <span>pwd</span>, <span>ifconfig</span>, <span>cat skills.txt</span>.
+                </div>
+                <div class="input-line">
+                    <span class="prompt">user@system:~$</span>
+                    <input type="text" class="input-field" id="terminal-input">
+                </div>
             </div>
-            <div class="input-line">
-                <span class="prompt">user@system:~$</span>
-                <input type="text" class="input-field" id="terminal-input">
-            </div>
-        </div>
-
+        
+            <!-- Link to terminal.js at the bottom -->
+            <script src="terminal.js"></script>
+        </body>
+        </html>
         <!-- Notepad-style window for "cat" command -->
         <div class="notepad-window
