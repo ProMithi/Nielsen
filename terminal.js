@@ -1,56 +1,75 @@
-function setupTerminal() {
-    const terminalInput = document.getElementById('terminal-input');
-    const terminalOutput = document.getElementById('terminal-output');
-    const notepadWindow = document.getElementById('notepad-window');
-    const notepadContent = document.getElementById('notepad-content');
-    const notepadClose = document.getElementById('notepad-close');
-  
-    // Command responses
-    const commands = {
+document.addEventListener('DOMContentLoaded', function() {
+  const terminalInput = document.getElementById('terminal-input');
+  const terminalOutput = document.getElementById('terminal-output');
+  const notepadWindow = document.getElementById('notepad-window'); 
+  const notepadContent = document.getElementById('notepad-content'); 
+  const notepadClose = document.getElementById('notepad-close');   
+
+  const baseRepoUrl = "https://raw.githubusercontent.com/promithi/promithi.github.io/main/";
+
+  const commands = {
       'ls': 'professional_experience.txt  skills.txt  certifications.txt',
       'pwd': '/home/user',
       'ifconfig': 'eth0      Link encap:Ethernet  HWaddr 00:1C:42:2E:60:4A\n' +
-                  '          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0\n' +
-                  '          inet6 addr: fe80::21c:42ff:fe2e:604a/64 Scope:Link',
+                  '          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0',
       'uname -a': 'Linux user-PC 5.4.0-73-generic #82-Ubuntu SMP x86_64 GNU/Linux',
       'clear': 'clear',
       'help': 'Available commands: ls, pwd, ifconfig, uname -a, cat, clear, help',
-      'cat skills.txt': 'Opening skills.txt in Notepad window...',
-    };
-  
-    // Handle terminal input
-    terminalInput.addEventListener('keydown', function (e) {
+  };
+
+  // Handle terminal input
+  terminalInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
-        const input = terminalInput.value.trim();
-        terminalInput.value = '';
-  
-        if (input in commands) {
-          if (input === 'clear') {
-            terminalOutput.textContent = '';
-          } else if (input === 'cat skills.txt') {
-            openNotepad();
+          e.preventDefault();
+          const input = terminalInput.value.trim();
+          terminalInput.value = ''; // Clear input field
+
+          const inputCommand = input.split(" ")[0];
+          const fileName = input.split(" ")[1];
+
+          if (inputCommand === 'cat' && fileName) {
+              fetchFile(fileName); // Handle fetching file content
+          } else if (input === 'clear') {
+              terminalOutput.textContent = '';
+          } else if (commands[input]) {
+              terminalOutput.textContent += `\nuser@system:~$ ${input}\n${commands[input]}`;
           } else {
-            terminalOutput.textContent += `\nuser@system:~$ ${input}\n${commands[input]}`;
+              terminalOutput.textContent += `\nuser@system:~$ ${input}\nCommand not found: ${input}`;
           }
-        } else {
-          terminalOutput.textContent += `\nuser@system:~$ ${input}\nCommand not found: ${input}`;
-        }
-  
-        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+
+          terminalOutput.scrollTop = terminalOutput.scrollHeight; // Auto-scroll to bottom
       }
-    });
-  
-    // Open Notepad window
-    function openNotepad() {
-      notepadWindow.style.display = 'block';
-      terminalOutput.textContent += `\nuser@system:~$ cat skills.txt\n${commands['cat skills.txt']}`;
-    }
-  
-    // Close Notepad window
-    notepadClose.addEventListener('click', () => {
-      notepadWindow.style.display = 'none';
-    });
+  });
+
+  // Fetch file content from GitHub repository
+  function fetchFile(fileName) {
+      const fileUrl = `${baseRepoUrl}${fileName}`;
+
+      fetch(fileUrl)
+          .then(response => {
+              if (response.ok) {
+                  return response.text();
+              } else {
+                  throw new Error("File not found");
+              }
+          })
+          .then(data => {
+              openNotepad(fileName, data);  // Open the notepad with the file content
+          })
+          .catch(error => {
+              terminalOutput.textContent += `\nuser@system:~$ cat ${fileName}\nError: ${error.message}`;
+          });
   }
-  
-  // Initialize the terminal after the page loads
-  window.onload = setupTerminal;
+
+  // Function to open the notepad window with file content
+  function openNotepad(fileName, content) {
+      notepadWindow.style.display = 'block';  // Show the notepad window
+      notepadContent.innerHTML = `<strong>${fileName}</strong><pre>${content}</pre>`;  // Populate notepad with file content
+      terminalOutput.textContent += `\nuser@system:~$ cat ${fileName}\nOpening ${fileName} in notepad window...`;
+  }
+
+  // Close notepad when 'x' button is clicked
+  notepadClose.addEventListener('click', function() {
+      notepadWindow.style.display = 'none';  // Hide the notepad window
+  });
+});
