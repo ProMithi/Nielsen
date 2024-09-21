@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
   const terminalInput = document.getElementById('terminal-input');
   const terminalOutput = document.getElementById('terminal-output');
-  const notepadWindow = document.getElementById('notepad-window'); 
-  const notepadContent = document.getElementById('notepad-content'); 
-  const notepadClose = document.getElementById('notepad-close');   
+  const notepadWindow = document.getElementById('notepad-window');
+  const notepadContent = document.getElementById('notepad-content');
+  const notepadClose = document.getElementById('notepad-close');
 
-  const baseRepoUrl = "https://raw.githubusercontent.com/promithi/promithi.github.io/main/";
+  // Base API URL for fetching the repo contents (Replace 'your-username' and 'your-repo')
+  const repoApiUrl = "https://api.github.com/repos/promithi/promithi.github.io/contents/";
 
   const commands = {
-      'ls': 'professional_experience.txt  skills.txt  certifications.txt',
       'pwd': '/home/user',
       'ifconfig': 'eth0      Link encap:Ethernet  HWaddr 00:1C:42:2E:60:4A\n' +
                   '          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0',
@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
           if (inputCommand === 'cat' && fileName) {
               fetchFile(fileName); // Handle fetching file content
+          } else if (input === 'ls') {
+              fetchRepoFiles(); // Fetch and display the .txt files
           } else if (input === 'clear') {
               terminalOutput.textContent = '';
           } else if (commands[input]) {
@@ -43,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fetch file content from GitHub repository
   function fetchFile(fileName) {
-      const fileUrl = `${baseRepoUrl}${fileName}`;
+      const fileUrl = `https://raw.githubusercontent.com/your-username/your-repo/main/${fileName}`;
 
       fetch(fileUrl)
           .then(response => {
@@ -72,4 +74,25 @@ document.addEventListener('DOMContentLoaded', function() {
   notepadClose.addEventListener('click', function() {
       notepadWindow.style.display = 'none';  // Hide the notepad window
   });
+
+  // Fetch all files in the GitHub repo and filter for .txt files
+  function fetchRepoFiles() {
+      fetch(repoApiUrl)
+          .then(response => response.json())
+          .then(files => {
+              const txtFiles = files
+                  .filter(file => file.name.endsWith('.txt')) // Filter .txt files
+                  .map(file => file.name) // Extract the file names
+                  .join('  '); // Join the names into a single string
+
+              if (txtFiles) {
+                  terminalOutput.textContent += `\nuser@system:~$ ls\n${txtFiles}`;
+              } else {
+                  terminalOutput.textContent += `\nuser@system:~$ ls\nNo .txt files found in the repository.`;
+              }
+          })
+          .catch(error => {
+              terminalOutput.textContent += `\nuser@system:~$ ls\nError fetching files: ${error.message}`;
+          });
+  }
 });
