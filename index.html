@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mikkel Lyng Nielsen - CV Terminal</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ccc;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+
+        .cv-content {
+            width: 80%;
+            max-width: 900px;
+            padding: 20px;
+            background-color: #2e2e2e;
+            border: 1px solid #555;
+            box-shadow: 0 0 10px #444;
+            margin-bottom: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #fff;
+        }
+
+        a {
+            color: #9cdcfe;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .terminal {
+            background-color: #1e1e1e;
+            color: #ccc;
+            width: 80%;
+            max-width: 900px;
+            border: 1px solid #555;
+            padding: 10px;
+            box-shadow: 0 0 10px #444;
+            overflow-y: auto;
+            height: 300px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-family: 'Courier New', Courier, monospace;
+            outline: none;
+            flex-grow: 1;
+            font-size: 16px;
+        }
+
+        .prompt {
+            margin-right: 5px;
+        }
+
+        /* Notepad-style window */
+        .notepad-window {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 30%;
+            width: 400px;
+            height: 300px;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .notepad-header {
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .notepad-content {
+            padding: 10px;
+            overflow-y: auto;
+            height: 80%;
+        }
+
+        .notepad-close {
+            cursor: pointer;
+            background-color: #f44336;
+            color: #fff;
+            padding: 3px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .terminal-output {
+            white-space: pre;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="cv-content">
+            <h1>Mikkel Lyng Nielsen</h1>
+            <p>Email: <a href="mailto:mikkelberg74@gmail.com">mikkelberg74@gmail.com</a> | LinkedIn: <a href="https://www.linkedin.com/in/mikkellynge" target="_blank">LinkedIn</a></p>
+
+            <div class="section">
+                <h2>Professional Experience</h2>
+                <h3>System Administrator & Threat Intelligence Specialist</h3>
+                <p>True Energy | 2023 – Present</p>
+                <ul>
+                    <li>Managed IT infrastructure and enhanced system security through threat intelligence protocols.</li>
+                    <li>Mitigated security risks and resolved vulnerabilities through proactive system analysis.</li>
+                    <li>Collaborated with cross-functional teams to ensure business continuity and data integrity.</li>
+                </ul>
+
+                <h3>Operations Manager</h3>
+                <p>E.ON Denmark | 2021 – 2023</p>
+                <ul>
+                    <li>Led global operations, managing the E.ON charging network.</li>
+                    <li>Oversaw project management and infrastructure specialization.</li>
+                    <li>Acted as Interim Team Lead and coordinated SCRUM projects for technicians.</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Skills</h2>
+                <ul>
+                    <li>System Administration</li>
+                    <li>Threat Intelligence</li>
+                    <li>Project Management</li>
+                    <li>Infrastructure Optimization</li>
+                    <li>Database Management</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Certifications</h2>
+                <ul>
+                    <li>CompTIA Security+</li>
+                    <li>CISSP (Certified Information Systems Security Professional)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Interactive Terminal -->
+        <div class="terminal" id="terminal">
+            <div class="terminal-output" id="terminal-output">
+                Welcome to Mikkel's CV terminal.
+                Type commands like <span>ls</span>, <span>cd</span>, <span>ipconfig</span>, <span>cat skills.txt</span>.
+            </div>
+            <div class="input-line">
+                <span class="prompt">user@system:~$</span>
+                <input type="text" class="input-field" id="terminal-input">
+            </div>
+        </div>
+
+        <!-- Notepad-style window for "cat" command -->
+        <div class="notepad-window" id="notepad-window">
+            <div class="notepad-header">
+                Notepad - skills.txt
+                <span class="notepad-close" id="notepad-close">x</span>
+            </div>
+            <div class="notepad-content" id="notepad-content">
+                <!-- Detailed skills will be added here later -->
+                Detailed skills information will be displayed here.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const notepadWindow = document.getElementById('notepad-window');
+        const notepadContent = document.getElementById('notepad-content');
+        const notepadClose = document.getElementById('notepad-close');
+
+        // Command responses
+        const commands = {
+            'ls': 'professional_experience.txt  skills.txt  certifications.txt',
+            'cd': 'Permission denied.',
+            'ipconfig': 'eth0      Link encap:Ethernet  HWaddr 00:1C:42:2E:60:4A\n          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0\n          inet6 addr: fe80::21c:42ff:fe2e:604a/64 Scope:Link',
+            'help': 'Available commands: ls, cd, ipconfig, cat, help',
+            'cat skills.txt': 'Opening skills.txt in Notepad window...',
+            'clear': 'clear'
+        };
+
+        // Handle terminal input
+        terminalInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                const input = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                if (input in commands) {
+                    if (input === 'clear') {
+                        terminalOutput.textContent = '';
+                    } else if (input === 'cat skills.txt') {
+                        openNotepad();
+                    } else {
+                        terminalOutput.textContent += `\nuser@system:~$ ${input}\n${commands[input]}`;
+                    }
+                } else {
+                    terminalOutput.textContent += `\nuser@system:~$ ${input}\nCommand not found: ${input}`;
+                }
+
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+        });
+
+        // Open Notepad window
+        function openNotepad() {
+            notepadWindow.style.display = 'block';
+            terminalOutput.textContent += `\nuser@system:~$ cat skills.txt\n${commands['cat skills.txt']}`;
+        }
+
+        // Close Notepad window
+        notepadClose.addEventListener('click', () => {
+            notepadWindow.style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>
