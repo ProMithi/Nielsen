@@ -45,23 +45,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fetch file content from GitHub repository
   function fetchFile(fileName) {
-      const fileUrl = `https://raw.githubusercontent.com/your-username/your-repo/main/${fileName}`;
+    const fileUrl = `https://raw.githubusercontent.com/promithi/promithi.github.io/main/${fileName}`;
 
-      fetch(fileUrl)
-          .then(response => {
-              if (response.ok) {
-                  return response.text();
-              } else {
-                  throw new Error("File not found");
-              }
-          })
-          .then(data => {
-              openNotepad(fileName, data);  // Open the notepad with the file content
-          })
-          .catch(error => {
-              terminalOutput.textContent += `\nuser@system:~$ cat ${fileName}\nError: ${error.message}`;
-          });
-  }
+    fetch(fileUrl)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error("File not found");
+            }
+        })
+        .then(data => {
+            openNotepad(fileName, data);  // Open the notepad with the file content
+        })
+        .catch(error => {
+            terminalOutput.textContent += `\nuser@system:~$ cat ${fileName}\nError: ${error.message}`;
+        });
+}
 
   // Function to open the notepad window with file content
   function openNotepad(fileName, content) {
