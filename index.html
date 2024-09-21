@@ -178,7 +178,7 @@
         <div class="terminal" id="terminal">
             <div class="terminal-output" id="terminal-output">
                 Welcome to Mikkel's CV terminal.
-                Type commands like <span>ls</span>, <span>cd</span>, <span>ipconfig</span>, <span>cat skills.txt</span>.
+                Type commands like <span>ls</span>, <span>pwd</span>, <span>ifconfig</span>, <span>cat skills.txt</span>.
             </div>
             <div class="input-line">
                 <span class="prompt">user@system:~$</span>
@@ -187,68 +187,4 @@
         </div>
 
         <!-- Notepad-style window for "cat" command -->
-        <div class="notepad-window" id="notepad-window">
-            <div class="notepad-header">
-                Notepad - skills.txt
-                <span class="notepad-close" id="notepad-close">x</span>
-            </div>
-            <div class="notepad-content" id="notepad-content">
-                <!-- Detailed skills will be added here later -->
-                Detailed skills information will be displayed here.
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const terminalInput = document.getElementById('terminal-input');
-        const terminalOutput = document.getElementById('terminal-output');
-        const notepadWindow = document.getElementById('notepad-window');
-        const notepadContent = document.getElementById('notepad-content');
-        const notepadClose = document.getElementById('notepad-close');
-
-        // Command responses
-        const commands = {
-            'ls': 'professional_experience.txt  skills.txt  certifications.txt',
-            'cd': 'Permission denied.',
-            'ipconfig': 'eth0      Link encap:Ethernet  HWaddr 00:1C:42:2E:60:4A\n          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0\n          inet6 addr: fe80::21c:42ff:fe2e:604a/64 Scope:Link',
-            'help': 'Available commands: ls, cd, ipconfig, cat, help',
-            'cat skills.txt': 'Opening skills.txt in Notepad window...',
-            'clear': 'clear'
-        };
-
-        // Handle terminal input
-        terminalInput.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                const input = terminalInput.value.trim();
-                terminalInput.value = '';
-
-                if (input in commands) {
-                    if (input === 'clear') {
-                        terminalOutput.textContent = '';
-                    } else if (input === 'cat skills.txt') {
-                        openNotepad();
-                    } else {
-                        terminalOutput.textContent += `\nuser@system:~$ ${input}\n${commands[input]}`;
-                    }
-                } else {
-                    terminalOutput.textContent += `\nuser@system:~$ ${input}\nCommand not found: ${input}`;
-                }
-
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-            }
-        });
-
-        // Open Notepad window
-        function openNotepad() {
-            notepadWindow.style.display = 'block';
-            terminalOutput.textContent += `\nuser@system:~$ cat skills.txt\n${commands['cat skills.txt']}`;
-        }
-
-        // Close Notepad window
-        notepadClose.addEventListener('click', () => {
-            notepadWindow.style.display = 'none';
-        });
-    </script>
-
-</body>
-</html>
+        <div class="notepad-window
