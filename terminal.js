@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (input === 'cat secret') {
                 // Only allow this command if the prerequisites have been executed
                 if (findCommandExecuted && crontabCommandExecuted && sudoCrontabCommandExecuted) {
-                    openNotepad('secret', 'This is the custom secret information. Congrats on unlocking it!');
+                    openNotepad('secret', 'Congrats on gaining access to the secret file! If you got this through the commands well done. If you did it with dark magic, then i think we will be a good fit! Send a mail to NmQ2OTZiNmI2YzYxNzI0MDcwNzI2Zjc0NmY2ZTIuNmQ2NQ== - You know what to do');
                 } else {
                     terminalOutput.textContent += 'Error: You need to execute the correct sequence of commands first.\n';
                 }
@@ -141,12 +141,19 @@ function fetchFile(fileName) {
 }
 
 // Function to open the notepad window with file content or custom info
+
 function openNotepad(fileName, content) {
     const notepadWindow = document.getElementById('notepad-window');
     const notepadContent = document.getElementById('notepad-content');
 
     notepadWindow.style.display = 'block';  // Show the notepad window
     notepadContent.innerHTML = `<strong>${fileName}</strong><pre>${content}</pre>`;  // Populate notepad with file content
+
+    // Adjust the notepad size based on content
+    notepadWindow.style.height = 'auto';  // Remove fixed height
+    const contentHeight = notepadContent.scrollHeight + 40;  // Add some padding
+    notepadWindow.style.height = `${contentHeight}px`;  // Adjust notepad window to fit content
+
     terminalOutput.textContent += `\nuser@system:~$ cat ${fileName}\nOpening ${fileName} in notepad window...`;
 }
 
