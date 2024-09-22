@@ -1,47 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const terminalInput = document.getElementById('terminal-input');
-  const terminalOutput = document.getElementById('terminal-output');
-  const notepadWindow = document.getElementById('notepad-window');
-  const notepadContent = document.getElementById('notepad-content');
-  const notepadClose = document.getElementById('notepad-close');
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.getElementById('terminal-output');
 
-  // Base API URL for fetching the repo contents (Replace 'your-username' and 'your-repo')
-  const repoApiUrl = "https://api.github.com/repos/promithi/promithi.github.io/contents/";
+    terminalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();  // Prevent form submission
 
-  const commands = {
-      'pwd': '/home/user',
-      'ifconfig': 'eth0      Link encap:Ethernet  HWaddr 00:1C:42:2E:60:4A\n' +
-                  '          inet addr:192.168.0.100  Bcast:192.168.0.255  Mask:255.255.255.0',
-      'uname -a': 'Linux user-PC 5.4.0-73-generic #82-Ubuntu SMP x86_64 GNU/Linux',
-      'clear': 'clear',
-      'help': 'Available commands: ls, pwd, ifconfig, uname -a, cat, clear, help',
-  };
+            const input = terminalInput.value.trim();  // Get the user input
+            terminalInput.value = '';  // Clear the input field
 
-  // Handle terminal input
-  terminalInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-          e.preventDefault();
-          const input = terminalInput.value.trim();
-          terminalInput.value = ''; // Clear input field
+            // Display the command in the output
+            terminalOutput.textContent += `\nuser@system:~$ ${input}\n`;
 
-          const inputCommand = input.split(" ")[0];
-          const fileName = input.split(" ")[1];
+            // Example handling for 'ls' command
+            if (input === 'ls') {
+                terminalOutput.textContent += 'file1.txt  file2.txt  skills.txt\n';
+            } else if (input === 'pwd') {
+                terminalOutput.textContent += '/home/user\n';
+            } else if (input.startsWith('cat')) {
+                terminalOutput.textContent += 'Displaying contents of the file...\n';
+            } else {
+                terminalOutput.textContent += `Command not found: ${input}\n`;
+            }
 
-          if (inputCommand === 'cat' && fileName) {
-              fetchFile(fileName); // Handle fetching file content
-          } else if (input === 'ls') {
-              fetchRepoFiles(); // Fetch and display the .txt files
-          } else if (input === 'clear') {
-              terminalOutput.textContent = '';
-          } else if (commands[input]) {
-              terminalOutput.textContent += `\nuser@system:~$ ${input}\n${commands[input]}`;
-          } else {
-              terminalOutput.textContent += `\nuser@system:~$ ${input}\nCommand not found: ${input}`;
-          }
-
-          terminalOutput.scrollTop = terminalOutput.scrollHeight; // Auto-scroll to bottom
-      }
-  });
+            // Scroll the terminal to the bottom
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+    });
 
   // Fetch file content from GitHub repository
   function fetchFile(fileName) {
