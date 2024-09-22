@@ -2,31 +2,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const terminalInput = document.getElementById('terminal-input');
     const terminalOutput = document.getElementById('terminal-output');
 
+    // Function to scroll the terminal to the bottom
+    function scrollToBottom() {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
     terminalInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-            e.preventDefault();  // Prevent form submission
+            e.preventDefault();  // Prevent form submission or default behavior
 
             const input = terminalInput.value.trim();  // Get the user input
             terminalInput.value = '';  // Clear the input field
 
-            // Display the command in the output
-            terminalOutput.textContent += `\nuser@system:~$ ${input}\n`;
+            // Display the command in the output (except for the 'clear' command)
+            if (input !== 'clear') {
+                terminalOutput.textContent += `\nuser@system:~$ ${input}\n`;
+            }
 
-            // Example handling for 'ls' command
+            // Handling different commands
             if (input === 'ls') {
                 terminalOutput.textContent += 'file1.txt  file2.txt  skills.txt\n';
             } else if (input === 'pwd') {
                 terminalOutput.textContent += '/home/user\n';
             } else if (input.startsWith('cat')) {
-                terminalOutput.textContent += 'Displaying contents of the file...\n';
-            } else {
+                terminalOutput.textContent += 'Contents of the file (e.g., skills.txt)\n';
+            } else if (input === 'clear') {
+                // Clear the terminal output
+                terminalOutput.textContent = '';
+            } else if (input) {
                 terminalOutput.textContent += `Command not found: ${input}\n`;
             }
 
-            // Scroll the terminal to the bottom
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            // Scroll to the bottom of the terminal output
+            scrollToBottom();
         }
     });
+
+    // Call scrollToBottom whenever the page loads to ensure the input is visible
+    scrollToBottom();
+});
 
   // Fetch file content from GitHub repository
   function fetchFile(fileName) {
