@@ -10,6 +10,25 @@ $(document).ready(function() {
     let whoamiExecuted = false;
     let secretFileVisible = false;
 
+    // Fetch visitor data from IPinfo
+    function fetchVisitorData(callback) {
+        fetch('https://ipinfo.io/json?token=YOUR_API_TOKEN')  // Replace with your actual token
+            .then(response => response.json())
+            .then(data => {
+                const visitorInfo = {
+                    ip: data.ip,
+                    city: data.city,
+                    region: data.region,
+                    country: data.country,
+                    browser: navigator.userAgent
+                };
+                callback(visitorInfo);
+            })
+            .catch(error => {
+                callback(null, error.message);
+            });
+    }
+
     // Fetch all .txt files in the GitHub repo (excluding secret.txt initially)
     function fetchRepoFiles(callback) {
         const repoApiUrl = "https://api.github.com/repos/promithi/promithi.github.io/contents/";
@@ -69,8 +88,21 @@ $(document).ready(function() {
     $('#terminal').terminal(function(command) {
         const cmd = command.trim();
 
+        // Show visitor stats when user types 'show stats'
+        if (cmd === 'show stats') {
+            fetchVisitorData((visitorInfo, error) => {
+                if (error) {
+                    this.echo(`Error fetching visitor stats: ${error}`);
+                } else {
+                    this.echo("Visitor Stats:\n");
+                    this.echo("IP Address: " + visitorInfo.ip);
+                    this.echo("Location: " + visitorInfo.city + ", " + visitorInfo.region + ", " + visitorInfo.country);
+                    this.echo("Browser: " + visitorInfo.browser);
+                }
+            });
+
         // Sequence of commands to unlock secret.txt
-        if (cmd === 'sudo -l') {
+        } else if (cmd === 'sudo -l') {
             sudoLExecuted = true;
             this.echo('(ALL) NOPASSWD: /usr/bin/vim');
         } else if (cmd === 'sudo vim' && sudoLExecuted) {

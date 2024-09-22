@@ -15,7 +15,7 @@
     <style>
         body {
             background-color: #0d0d0d;
-            color: #fdd40a;
+            color: #ffffff;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
@@ -191,5 +191,36 @@
     </div>
 
     <script src="terminal.js"></script>
+    <script>
+        function fetchVisitorData() {
+            // Use an IP location service like IPinfo to get the user's location based on their IP
+            fetch('https://ipinfo.io/json?token=ffd55851f36efc')
+                .then(response => response.json())
+                .then(data => {
+                    const visitorInfo = {
+                        ip: data.ip,
+                        city: data.city,
+                        region: data.region,
+                        country: data.country,
+                        browser: navigator.userAgent
+                    };
+                    
+                    // Display visitor info in the terminal
+                    showVisitorStats(visitorInfo);
+                })
+                .catch(error => console.error('Error fetching visitor data:', error));
+        }
+    
+        function showVisitorStats(visitorInfo) {
+            const terminal = $('#terminal').terminal();
+            terminal.echo("Visitor Stats:\n");
+            terminal.echo("IP Address: " + visitorInfo.ip);
+            terminal.echo("Location: " + visitorInfo.city + ", " + visitorInfo.region + ", " + visitorInfo.country);
+            terminal.echo("Browser: " + visitorInfo.browser);
+        }
+    
+        // Call the function to fetch and show visitor data
+        fetchVisitorData();
+    </script>
 </body>
 </html>
