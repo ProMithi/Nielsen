@@ -1,0 +1,130 @@
+/* Glitch layers */
+.glitch-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0d0d0d;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* Glitch layer for RGB separation */
+.glitch-layer-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.2); /* Red layer */
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    animation: rgb-separation 0.15s infinite alternate;
+}
+
+.glitch-layer-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.2); /* Green layer */
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    animation: rgb-separation 0.15s infinite alternate-reverse;
+}
+
+.glitch-layer-3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 255, 0.2); /* Blue layer */
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    animation: rgb-separation 0.2s infinite alternate;
+}
+
+/* Distortion Effect */
+.glitch-distortion {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #0d0d0d;
+    mix-blend-mode: overlay;
+    opacity: 0.1;
+    animation: distortion 0.3s infinite;
+}
+
+/* Custom styles for the terminal */
+#terminal {
+    width: 100%;
+    max-width: 1200px;  /* Set a maximum width */
+    height: 800px;     /* Set the height to make it fit better */
+    background-color: #1a1a1a;  /* Dark background */
+    border: 1px solid #333;
+    padding: 10px;
+    font-size: 16px;   /* Adjust font size */
+    color: #00ff66;    /* Terminal text color to match theme */
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    overflow-y: auto;
+}
+
+/* Terminal text color and background styling */
+.terminal-output, .terminal-input {
+    background-color: #1a1a1a;  /* Dark background */
+    color: #00ff66;             /* Glowing green text */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Terminal prompt */
+.terminal-prompt {
+    color: #00ff66;
+}
+
+/* Adjust the height dynamically */
+#terminal .terminal-output {
+    height: 100%;
+    width: 100%;
+}
+
+#terminal {
+    overflow: hidden; /* Hide overflow if it's excessive */
+}
+
+.terminal-output {
+    overflow-y: auto; /* Allow scrolling only in the output area */
+}
+
+/* RGB Color Separation Keyframes */
+@keyframes rgb-separation {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(-5px, -5px); /* Creates the color offset effect */
+    }
+}
+
+/* Glitchy distortion with lines */
+@keyframes distortion {
+    0% {
+        clip: rect(100px, 9999px, 200px, 0);
+        transform: skew(0.5deg);
+    }
+    25% {
+        clip: rect(50px, 9999px, 150px, 0);
+        transform: skew(-0.5deg);
+    }
+    50% {
+        clip: rect(120px, 9999px, 220px, 0);
+        transform: skew(0.3deg);
+    }
+    100% {
+        clip: rect(90px, 9999px, 180px, 0);
+        transform: skew(-0.2deg);
+    }
+}
