@@ -1,9 +1,25 @@
+// Define terminalOutput globally
+let terminalOutput;
+
 document.addEventListener('DOMContentLoaded', function() {
     const terminalInput = document.getElementById('terminal-input');
-    const terminalOutput = document.getElementById('terminal-output');
-    const notepadWindow = document.getElementById('notepad-window');  // Reference to the notepad window
-    const notepadContent = document.getElementById('notepad-content'); // Reference to the notepad content
-    const notepadClose = document.getElementById('notepad-close');     // Reference to the close button
+    terminalOutput = document.getElementById('terminal-output');  // Set terminalOutput globally here
+    const notepadWindow = document.getElementById('notepad-window');
+    const notepadContent = document.getElementById('notepad-content');
+    const notepadClose = document.getElementById('notepad-close');
+
+    // Command history array
+    let commandHistory = [];
+    let historyIndex = -1;  // Tracks current position in history
+
+    // State variables to track prerequisite commands
+    let findCommandExecuted = false;
+    let crontabCommandExecuted = false;
+    let sudoCrontabCommandExecuted = false;
+
+    let availableTxtFiles = []; // List of available .txt files
+
+    
 
     // Function to scroll the terminal to the bottom
     function scrollToBottom() {
@@ -17,6 +33,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = terminalInput.value.trim();  // Get the user input
             terminalInput.value = '';  // Clear the input field
 
+            // Store the command in history and reset the history index
+            if (input) {
+                commandHistory.push(input);
+                historyIndex = commandHistory.length;
+            }
+
             // Display the command in the output (except for the 'clear' command)
             if (input !== 'clear') {
                 terminalOutput.textContent += `\nuser@system:~$ ${input}\n`;
@@ -27,12 +49,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchRepoFiles(); // Fetch .txt files and list them
             } else if (input === 'pwd') {
                 terminalOutput.textContent += '/home/user\n';
+            } else if (input === 'find / -perm -u=s -type f 2>/dev/null') {
+                findCommandExecuted = true;
+                terminalOutput.textContent += 'Searching for files...\n';
+            } else if (input === 'crontab -l') {
+                if (findCommandExecuted) {
+                    crontabCommandExecuted = true;
+                    terminalOutput.textContent += 'Listing user crontabs...\n';
+                } else {
+                    terminalOutput.textContent += 'Prerequisite command not executed.\n';
+                }
+            } else if (input === 'sudo crontab -l') {
+                if (findCommandExecuted && crontabCommandExecuted) {
+                    sudoCrontabCommandExecuted = true;
+                    terminalOutput.textContent += 'Listing root crontabs...\n';
+                } else {
+                    terminalOutput.textContent += 'Prerequisite command not executed.\n';
+                }
+            } else if (input === 'cat secret') {
+                // Only allow this command if the prerequisites have been executed
+                if (findCommandExecuted && crontabCommandExecuted && sudoCrontabCommandExecuted) {
+                    openNotepad('secret', 'This is the custom secret information. Congrats on unlocking it!');
+                } else {
+                    terminalOutput.textContent += 'Error: You need to execute the correct sequence of commands first.\n';
+                }
             } else if (input.startsWith('cat')) {
                 const fileName = input.split(' ')[1]; // Get the filename from the command
-                if (fileName) {
+                if (availableTxtFiles.includes(fileName)) {
                     fetchFile(fileName);
                 } else {
-                    terminalOutput.textContent += 'Error: No file specified\n';
+                    terminalOutput.textContent += `Error: ${fileName} not found or not accessible.\n`;
                 }
             } else if (input === 'clear') {
                 // Clear the terminal output
@@ -43,6 +89,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Scroll to the bottom of the terminal output
             scrollToBottom();
+        }
+
+        // Handle up and down arrow keys for command history navigation
+        if (e.key === 'ArrowUp') {
+            // Navigate backward in history
+            if (historyIndex > 0) {
+                historyIndex--;
+                terminalInput.value = commandHistory[historyIndex];  // Show the previous command
+            }
+        } else if (e.key === 'ArrowDown') {
+            // Navigate forward in history
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                terminalInput.value = commandHistory[historyIndex];  // Show the next command
+            } else {
+                // Clear the input if we're at the end of the history
+                terminalInput.value = '';
+                historyIndex = commandHistory.length;  // Reset to the most recent position
+            }
         }
     });
 
@@ -75,7 +140,7 @@ function fetchFile(fileName) {
         });
 }
 
-// Function to open the notepad window with file content
+// Function to open the notepad window with file content or custom info
 function openNotepad(fileName, content) {
     const notepadWindow = document.getElementById('notepad-window');
     const notepadContent = document.getElementById('notepad-content');
@@ -92,13 +157,13 @@ function fetchRepoFiles() {
     fetch(repoApiUrl)
         .then(response => response.json())
         .then(files => {
-            const txtFiles = files
+            availableTxtFiles = files
                 .filter(file => file.name.endsWith('.txt')) // Filter .txt files
-                .map(file => file.name) // Extract the file names
-                .join('  '); // Join the names into a single string
+                .map(file => file.name); // Extract the file names
 
-            if (txtFiles) {
-                terminalOutput.textContent += `\nuser@system:~$ ls\n${txtFiles}`;
+            if (availableTxtFiles.length > 0) {
+                const txtFilesList = availableTxtFiles.join('  '); // Join the names into a single string
+                terminalOutput.textContent += `\nuser@system:~$ ls\n${txtFilesList}`;
             } else {
                 terminalOutput.textContent += `\nuser@system:~$ ls\nNo .txt files found in the repository.`;
             }
