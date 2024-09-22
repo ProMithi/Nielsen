@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mikkel Lynge Nielsen - CV Terminal</title>
-    
+
     <!-- Adding JQuery and JQuery Terminal -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.34.0/css/jquery.terminal.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.34.0/js/jquery.terminal.min.js"></script>
-    <img src="https://tryhackme-badges.s3.amazonaws.com/Mikklar.png" alt="TryHackMe">
 
+    <!-- Optional: Your custom styles -->
     <link rel="stylesheet" href="glitch.css"> <!-- Linking glitch.css file -->
     <style>
         body {
@@ -54,36 +54,6 @@
         a:hover {
             color: #fff;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .hidden-message {
-            background-color: #222;
-            color: #0d0d0d;
-            padding: 5px;
-            cursor: pointer;
-            transition: color 0.5s ease-in-out;
-        }
-
-        .hidden-message:hover {
-            color: #f5f5f5;
-        }
-
-        .dark-button {
-            background-color: #333;
-            color: #f5f5f5;
-            border: 1px solid #555;
-            padding: 10px 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: 0.3s ease-in-out;
-        }
-
-        .dark-button:hover {
-            background-color: #e60000;
-            color: #fff;
-            text-shadow: 0 0 8px #ff0000, 0 0 15px #e60000;
         }
 
         /* Notepad-style window */
@@ -134,27 +104,25 @@
 
         /* Terminal container customizations */
         #terminal {
-            width: 100%;          /* Full width */
-            max-width: 900px;      /* Max width of 900px */
-            height: 400px;         /* Set fixed height */
-            background-color: #000000;  /* Dark background */
+            width: 100%;          
+            max-width: 900px;     
+            height: 400px;         
+            background-color: #000000;  
             border: 1px solid #333;
             padding: 10px;
             font-size: 16px;
-            color: #fff;        /* Glowing green text */
-            box-shadow: 0 0 15px #333; /* Glowing effect */
+            color: #fff;        
+            box-shadow: 0 0 15px #333; 
             overflow-y: auto;
         }
 
         .terminal-output {
-            color: #fff;        /* Green text for terminal output */
+            color: #fff;
         }
 
-        
-
-        /* Ensuring smooth scrolling */
+        /* Ensure smooth scrolling */
         .terminal-output {
-            height: calc(100% - 50px);  /* Leave room for input */
+            height: calc(100% - 50px);  
             overflow-y: auto;
             padding: 5px;
         }
@@ -221,41 +189,6 @@
             <!-- File content will be inserted here -->
         </div>
     </div>
-
-    <!-- Glitch Effect Div with Layers -->
-    <div class="glitch-effect" id="glitch-effect">
-        <div class="glitch-layer-1"></div>
-        <div class="glitch-layer-2"></div>
-        <div class="glitch-layer-3"></div>
-        <div class="glitch-distortion"></div>
-    </div>
-
-    <script>
-        $(document).ready(function() {
-            $('#terminal').terminal(function(command) {
-                if (command === 'ls') {
-                    this.echo('file1.txt  file2.txt  secret.txt');
-                } else if (command.startsWith('cat ')) {
-                    let file = command.split(' ')[1];
-                    if (file === 'secret.txt') {
-                        this.echo('Congrats on accessing the secret file!');
-                    } else {
-                        this.echo(`Error: ${file} not found.`);
-                    }
-                } else if (command === 'clear') {
-                    this.clear();
-                } else {
-                    this.echo(`Command not found: ${command}`);
-                }
-            }, {
-                greetings: 'Welcome to the interactive terminal.',
-                name: 'js_terminal',
-                height: '100%',    // Dynamically adjust height
-                width: '100%',     // Full width
-                prompt: 'user@system:~$ '
-            });
-        });
-    </script>
 
     <script src="terminal.js"></script>
 </body>

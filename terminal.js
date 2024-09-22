@@ -3,27 +3,26 @@ $(document).ready(function() {
     const notepadContent = $('#notepad-content');
     const notepadClose = $('#notepad-close');
 
-    // State variables to track prerequisite commands
-    let findCommandExecuted = false;
-    let crontabCommandExecuted = false;
-    let sudoCrontabCommandExecuted = false;
+    // State variables to track command progress
+    let sudoLExecuted = false;
+    let sudoVimExecuted = false;
+    let bashExecuted = false;
+    let whoamiExecuted = false;
+    let secretFileVisible = false;
 
-    // Fetch all .txt files in the GitHub repo
+    // Fetch all .txt files in the GitHub repo (excluding secret.txt initially)
     function fetchRepoFiles(callback) {
         const repoApiUrl = "https://api.github.com/repos/promithi/promithi.github.io/contents/";
 
         fetch(repoApiUrl)
             .then(response => response.json())
             .then(files => {
-                const availableTxtFiles = files
-                    .filter(file => file.name.endsWith('.txt'))
+                // Filter out 'secret.txt' if the commands haven't been executed
+                let availableTxtFiles = files
+                    .filter(file => file.name.endsWith('.txt') && (secretFileVisible || file.name !== 'secret.txt'))
                     .map(file => file.name);
 
-                if (availableTxtFiles.length > 0) {
-                    callback(availableTxtFiles);
-                } else {
-                    callback([]);
-                }
+                callback(availableTxtFiles);
             })
             .catch(error => {
                 callback([], error.message);
@@ -33,18 +32,18 @@ $(document).ready(function() {
     // Display formatted ls output with columns
     function displayLsOutput(files) {
         let output = '';
-        const columnWidth = 20; 
-        const columns = 3; 
+        const columnWidth = 20; // Define a fixed column width
+        const columns = 3; // Adjust number of columns
 
         for (let i = 0; i < files.length; i++) {
-            output += files[i].padEnd(columnWidth, ' '); 
+            output += files[i].padEnd(columnWidth, ' '); // Align columns
             if ((i + 1) % columns === 0) {
-                output += '\n'; 
+                output += '\n'; // New line after every set of columns
             }
         }
 
         if (files.length % columns !== 0) {
-            output += '\n'; 
+            output += '\n'; // Final line break
         }
 
         return output;
@@ -55,16 +54,40 @@ $(document).ready(function() {
         notepadWindow.show();
         notepadContent.html(`<strong>${fileName}</strong><pre>${content}</pre>`);
 
+        // Adjust the notepad window height based on content
         notepadWindow.height('auto');
-        const contentHeight = notepadContent[0].scrollHeight + 40; 
+        const contentHeight = notepadContent[0].scrollHeight + 40; // Adjust size
         notepadWindow.height(contentHeight);
     }
 
-    // Terminal logic
+    // Close notepad
+    notepadClose.click(function() {
+        notepadWindow.hide();
+    });
+
+    // Terminal logic using JQuery Terminal
     $('#terminal').terminal(function(command) {
         const cmd = command.trim();
-        
-        if (cmd === 'ls') {
+
+        // Sequence of commands to unlock secret.txt
+        if (cmd === 'sudo -l') {
+            sudoLExecuted = true;
+            this.echo('(ALL) NOPASSWD: /usr/bin/vim');
+        } else if (cmd === 'sudo vim' && sudoLExecuted) {
+            sudoVimExecuted = true;
+            this.echo('Entering vim...');
+        } else if (cmd === ':!bash' && sudoVimExecuted) {
+            bashExecuted = true;
+            this.echo('Opening bash shell...');
+        } else if (cmd === 'whoami' && bashExecuted) {
+            whoamiExecuted = true;
+            this.echo('root');
+        } else if (cmd === 'exit' && whoamiExecuted) {
+            secretFileVisible = true;
+            this.echo('Exiting bash... secret.txt is now accessible.');
+
+        // Handle 'ls' command, only show secret.txt after sequence completion
+        } else if (cmd === 'ls') {
             fetchRepoFiles((files, error) => {
                 if (error) {
                     this.echo(`Error fetching files: ${error}`);
@@ -74,31 +97,12 @@ $(document).ready(function() {
                     this.echo(displayLsOutput(files));
                 }
             });
-        } else if (cmd === 'pwd') {
-            this.echo('/home/user');
-        } else if (cmd === 'find / -perm -u=s -type f 2>/dev/null') {
-            findCommandExecuted = true;
-            this.echo('Searching for files...');
-        } else if (cmd === 'crontab -l') {
-            if (findCommandExecuted) {
-                crontabCommandExecuted = true;
-                this.echo('Listing user crontabs...');
-            } else {
-                this.echo('Prerequisite command not executed.');
-            }
-        } else if (cmd === 'sudo crontab -l') {
-            if (findCommandExecuted && crontabCommandExecuted) {
-                sudoCrontabCommandExecuted = true;
-                this.echo('Listing root crontabs...');
-            } else {
-                this.echo('Prerequisite command not executed.');
-            }
-        } else if (cmd === 'cat secret.txt') {
-            if (findCommandExecuted && crontabCommandExecuted && sudoCrontabCommandExecuted) {
-                openNotepad('secret.txt', 'Congrats on gaining access to the secret file! Send a mail to NmQ2OTZiNmI2YzYxNzI0MDcwNzI2Zjc0NmY2ZTIuNmQ2NQ== - You know what to do.');
-            } else {
-                this.echo('Error: You need to execute the correct sequence of commands first.');
-            }
+
+        // Handle 'cat secret.txt' command after the correct sequence
+        } else if (cmd === 'cat secret.txt' && secretFileVisible) {
+            openNotepad('secret.txt', 'Congrats on gaining access to the secret file! Send a mail to NmQ2OTZiNmI2YzYxNzI0MDcwNzI2Zjc0NmY2ZTIuNmQ2NQ== - You know what to do.');
+
+        // Handle 'cat' for other .txt files
         } else if (cmd.startsWith('cat ')) {
             const fileName = cmd.split(' ')[1];
             fetch(`https://raw.githubusercontent.com/promithi/promithi.github.io/main/${fileName}`)
@@ -112,22 +116,21 @@ $(document).ready(function() {
                 .catch(error => {
                     this.echo(`Error: ${fileName} not found.`);
                 });
+
+        // Handle 'clear' command
         } else if (cmd === 'clear') {
             this.clear();
+
+        // Command not found handling
         } else {
             this.echo(`Command not found: ${cmd}`);
         }
     }, {
         greetings: 'Welcome to the interactive terminal.',
         name: 'js_terminal',
-        height: '100%', 
-        width: '100%', 
+        height: '100%',
+        width: '100%',
         prompt: 'user@system:~$ ',
         completion: true
     });
-
-    notepadClose.click(function() {
-        notepadWindow.hide();
-    });
-
 });
