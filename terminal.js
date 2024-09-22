@@ -94,4 +94,4 @@ document.addEventListener('DOMContentLoaded', function() {
               terminalOutput.textContent += `\nuser@system:~$ ls\nError fetching files: ${error.message}`;
           });
   }
-});
+  
