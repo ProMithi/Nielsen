@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mikkel Lynge Nielsen - CV Terminal</title>
+    <title>Mikkel Lyng Nielsen - CV Terminal</title>
 
-    <!-- Adding JQuery and JQuery Terminal -->
+    <!-- Add JQuery and JQuery Terminal Libraries -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.34.0/css/jquery.terminal.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.34.0/js/jquery.terminal.min.js"></script>
 
-    <!-- Optional: Your custom styles -->
-    <link rel="stylesheet" href="glitch.css"> <!-- Linking glitch.css file -->
+    <!-- Optional: Custom Styles -->
+    <link rel="stylesheet" href="glitch.css">
+
     <style>
         body {
             background-color: #0d0d0d;
-            color: #ffffff;
+            color: #f5f5f5;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
@@ -26,8 +27,9 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 100vh;
-            position: relative;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .cv-content {
@@ -38,6 +40,7 @@
             border: 1px solid #333;
             box-shadow: 0 0 10px #333;
             margin-bottom: 20px;
+            box-sizing: border-box;
         }
 
         h1, h2, h3 {
@@ -56,13 +59,28 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Notepad-style window */
+        /* Terminal container styling */
+        #terminal {
+            width: 100%;
+            max-width: 900px;
+            height: 40vh; /* Use viewport height for flexible scaling */
+            background-color: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 0 15px #333;
+            overflow-y: auto;
+        }
+
+        /* Notepad window for file content */
         .notepad-window {
             display: none;
             position: fixed;
             top: 20%;
             left: 30%;
             width: 400px;
+            height: auto;
             background-color: #1a1a1a;
             color: #fff;
             border: 2px solid #000;
@@ -70,76 +88,56 @@
             font-family: 'Courier New', Courier, monospace;
             box-shadow: 0 0 15px #333;
             z-index: 1000;
-            height: auto;
             max-height: 80vh;
             overflow-y: auto;
         }
 
-        .notepad-header {
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            text-align: center;
+        /* Responsive design adjustments */
+        @media (max-width: 1200px) {
+            #terminal {
+                height: 35vh; /* Adjust terminal height for smaller screens */
+            }
+
+            .cv-content {
+                width: 90%;
+            }
         }
 
-        .notepad-content {
-            padding: 10px;
-            overflow-y: auto;
-            height: 80%;
+        @media (max-width: 768px) {
+            #terminal {
+                height: 30vh; /* Further adjust terminal height for tablets */
+                font-size: 14px; /* Reduce font size */
+            }
+
+            .cv-content {
+                width: 95%;
+            }
         }
 
-        .notepad-close {
-            cursor: pointer;
-            background-color: #f44336;
-            color: #fff;
-            padding: 3px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            line-height: 20px;
-        }
+        @media (max-width: 480px) {
+            #terminal {
+                height: 25vh; /* Small terminal height for mobile */
+                font-size: 12px; /* Smaller font size for mobile */
+            }
 
-        /* Terminal container customizations */
-        #terminal {
-            width: 100%;          
-            max-width: 900px;     
-            height: 400px;         
-            background-color: #000000;  
-            border: 1px solid #333;
-            padding: 10px;
-            font-size: 16px;
-            color: #fff;        
-            box-shadow: 0 0 15px #333; 
-            overflow-y: auto;
+            .cv-content {
+                width: 100%;
+                padding: 10px;
+            }
         }
-
-        .terminal-output {
-            color: #fff;
-        }
-
-        /* Ensure smooth scrolling */
-        .terminal-output {
-            height: calc(100% - 50px);  
-            overflow-y: auto;
-            padding: 5px;
-        }
-
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="cv-content">
-            <h1>Mikkel Lynge Nielsen</h1>
+            <h1>Mikkel Lyng Nielsen</h1>
             <p>Email: <a href="mailto:mikkelberg74@gmail.com">Encrypted Email</a> | LinkedIn: <a href="https://www.linkedin.com/in/mikkellynge" target="_blank">Encrypted LinkedIn</a></p>
 
             <div class="section">
                 <h2>Professional Experience</h2>
                 <h3>System Administrator & Threat Intelligence Specialist</h3>
-                <p> VHJ1ZSBFbmVyZ3k= | 2023 – Present</p>
+                <p>True Energy | 2023 – Present</p>
                 <ul>
                     <li>Managed IT infrastructure and enhanced system security through threat intelligence protocols.</li>
                     <li>Mitigated security risks and resolved vulnerabilities through proactive system analysis.</li>
@@ -175,7 +173,7 @@
             </div>
         </div>
 
-        <!-- Interactive Terminal with JQuery Terminal -->
+        <!-- Interactive Terminal -->
         <div id="terminal"></div>
     </div>
 
@@ -191,36 +189,5 @@
     </div>
 
     <script src="terminal.js"></script>
-    <script>
-        function fetchVisitorData() {
-            // Use an IP location service like IPinfo to get the user's location based on their IP
-            fetch('https://ipinfo.io/json?token=ffd55851f36efc')
-                .then(response => response.json())
-                .then(data => {
-                    const visitorInfo = {
-                        ip: data.ip,
-                        city: data.city,
-                        region: data.region,
-                        country: data.country,
-                        browser: navigator.userAgent
-                    };
-                    
-                    // Display visitor info in the terminal
-                    showVisitorStats(visitorInfo);
-                })
-                .catch(error => console.error('Error fetching visitor data:', error));
-        }
-    
-        function showVisitorStats(visitorInfo) {
-            const terminal = $('#terminal').terminal();
-            terminal.echo("Visitor Stats:\n");
-            terminal.echo("IP Address: " + visitorInfo.ip);
-            terminal.echo("Location: " + visitorInfo.city + ", " + visitorInfo.region + ", " + visitorInfo.country);
-            terminal.echo("Browser: " + visitorInfo.browser);
-        }
-    
-        // Call the function to fetch and show visitor data
-        fetchVisitorData();
-    </script>
 </body>
 </html>
